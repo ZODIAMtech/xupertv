@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xuper TV - Navegación Corregida</title>
-    <link href="https://zencdn.net" rel="stylesheet" />
+    <title>Xuper TV - Videos Reales</title>
     <style>
         * { 
             box-sizing: border-box; 
-            /* Evita que el celular y la TV seleccionen el texto al mantener presionado o usar el cursor */
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
         body {
@@ -26,97 +22,78 @@
         }
         .player-box {
             width: 100%;
-            height: 50vh;
+            height: 45vh;
             background-color: #000000;
         }
-        .video-js {
-            width: 100% !important;
-            height: 100% !important;
+        video {
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
         }
         .menu-box {
-            height: 50vh;
-            padding: 25px;
+            height: 55vh;
+            padding: 20px;
             overflow-y: auto;
         }
-        .grid-canales {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .lista-vertical {
+            display: flex;
+            flex-direction: column;
             gap: 15px;
+            max-width: 700px;
+            margin: 0 auto;
         }
         .item-canal {
             background-color: #131924;
-            padding: 25px;
-            font-size: 20px;
+            padding: 35px 20px;
+            font-size: 24px;
             font-weight: bold;
             text-align: center;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 4px solid transparent;
             color: #cfd8e3;
             cursor: pointer;
+            transition: 0.1s;
         }
-        .item-canal.focus {
+        .item-canal:hover, .item-canal.focus {
             border-color: #00ff88;
             background-color: #1c2536;
             color: #ffffff;
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
     </style>
 </head>
 <body>
 
+    <!-- Reproductor nativo compatible con Smart TV antiguas -->
     <div class="player-box">
-        <video id="tv-player" class="video-js vjs-default-skin" controls preload="auto">
-            <source src="https://ctedge.com" type="application/x-mpegURL">
+        <video id="main-player" controls autoplay>
+            <source src="https://googleapis.com" type="video/mp4">
         </video>
     </div>
 
+    <!-- Lista con enlaces de video MP4 Reales y Públicos -->
     <div class="menu-box">
-        <div class="grid-canales">
-            <!-- Funciona al toque en celular (onclick) y con control remoto en la tele -->
-            <div class="item-canal focus" onclick="reproducirEnlace('https://ctedge.com', 0)">📺 TELESUR</div>
-            <div class="item-canal" onclick="reproducirEnlace('https://rtvc-live-vpaid.com', 1)">📰 RTVC NOTICIAS</div>
-            <div class="item-canal" onclick="reproducirEnlace('https://b-cdn.net', 2)">🎬 CANAL 26</div>
-            <div class="item-canal" onclick="reproducirEnlace('https://akamaihd.net', 3)">⭐ DW ESPAÑOL</div>
+        <div class="lista-vertical">
+            <div class="item-canal focus" onclick="reproducirVideo('https://googleapis.com', this)">🎬 PELÍCULA: BIG BUCK BUNNY</div>
+            <div class="item-canal" onclick="reproducirVideo('https://googleapis.com', this)">🎬 CORTOMETRAJE: ELEPHANTS DREAM</div>
+            <div class="item-canal" onclick="reproducirVideo('https://googleapis.com', this)">🔥 VIDEO TEST: FOR BIGGER BLAZES</div>
+            <div class="item-canal" onclick="reproducirVideo('https://googleapis.com', this)">🚗 CLIPS: SUBARU OUTBACK</div>
         </div>
     </div>
 
-    <script src="https://zencdn.net"></script>
     <script>
-        let currentIndex = 0;
-        const canales = document.querySelectorAll('.item-canal');
-        const vjsPlayer = videojs('tv-player');
+        const player = document.getElementById('main-player');
 
-        // Función universal para clics y control remoto
-        function reproducirEnlace(url, index) {
-            canales[currentIndex].classList.remove('focus');
-            currentIndex = index;
-            canales[currentIndex].classList.add('focus');
+        function reproducirVideo(url, elemento) {
+            // Cambiar enfoque verde
+            document.querySelectorAll('.item-canal').forEach(el => el.classList.remove('focus'));
+            elemento.classList.add('focus');
             
-            vjsPlayer.src({ type: 'application/x-mpegURL', src: url });
-            vjsPlayer.play().catch(function(error) {
-                console.log("Error al reproducir: ", error);
-            });
+            // Inyectar el video real y reproducir
+            player.src = url;
+            player.load();
+            player.play();
         }
-
-        // CONTROL EXCLUSIVO PARA LAS FLECHAS DE LA TELEVISIÓN
-        document.addEventListener('keydown', function(e) {
-            canales[currentIndex].classList.remove('focus');
-
-            if (e.key === 'ArrowRight' && currentIndex % 2 === 0) {
-                currentIndex++;
-            } else if (e.key === 'ArrowLeft' && currentIndex % 2 === 1) {
-                currentIndex--;
-            } else if (e.key === 'ArrowDown' && currentIndex < 2) {
-                currentIndex += 2;
-            } else if (e.key === 'ArrowUp' && currentIndex >= 2) {
-                currentIndex -= 2;
-            } else if (e.key === 'Enter') {
-                // Simula un clic real sobre el botón enfocado por el control remoto
-                canales[currentIndex].click();
-            }
-
-            canales[currentIndex].classList.add('focus');
-        });
     </script>
 </body>
 </html>
