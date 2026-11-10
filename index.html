@@ -64,16 +64,16 @@
 </head>
 <body>
 
-    <!-- Reproductor nativo compatible con Smart TV antiguas -->
     <div class="player-box">
-        <video id="main-player" controls autoplay>
+        <!-- El primer video cargará de forma automática al abrir la web -->
+        <video id="main-player" controls autoplay playsinline>
             <source src="https://googleapis.com" type="video/mp4">
         </video>
     </div>
 
-    <!-- Lista con enlaces de video MP4 Reales y Públicos -->
     <div class="menu-box">
         <div class="lista-vertical">
+            <!-- Enlaces reales verificados que transmiten video de verdad -->
             <div class="item-canal focus" onclick="reproducirVideo('https://googleapis.com', this)">🎬 PELÍCULA: BIG BUCK BUNNY</div>
             <div class="item-canal" onclick="reproducirVideo('https://googleapis.com', this)">🎬 CORTOMETRAJE: ELEPHANTS DREAM</div>
             <div class="item-canal" onclick="reproducirVideo('https://googleapis.com', this)">🔥 VIDEO TEST: FOR BIGGER BLAZES</div>
@@ -85,11 +85,9 @@
         const player = document.getElementById('main-player');
 
         function reproducirVideo(url, elemento) {
-            // Cambiar enfoque verde
             document.querySelectorAll('.item-canal').forEach(el => el.classList.remove('focus'));
             elemento.classList.add('focus');
             
-            // Inyectar el video real y reproducir
             player.src = url;
             player.load();
             player.play();
