@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xuper TV - Navegación Directa</title>
+    <title>Xuper TV - Navegación Corregida</title>
     <link href="https://zencdn.net" rel="stylesheet" />
     <style>
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+            /* Evita que el celular y la TV seleccionen el texto al mantener presionado o usar el cursor */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         body {
             margin: 0;
             background-color: #080b11;
@@ -29,7 +36,7 @@
         .menu-box {
             height: 50vh;
             padding: 25px;
-            overflow: hidden;
+            overflow-y: auto;
         }
         .grid-canales {
             display: grid;
@@ -45,6 +52,7 @@
             border-radius: 10px;
             border: 4px solid transparent;
             color: #cfd8e3;
+            cursor: pointer;
         }
         .item-canal.focus {
             border-color: #00ff88;
@@ -64,10 +72,11 @@
 
     <div class="menu-box">
         <div class="grid-canales">
-            <div class="item-canal focus" data-stream="https://ctedge.com">📺 TELESUR (Mundial)</div>
-            <div class="item-canal" data-stream="https://rtvc-live-vpaid.com">📰 RTVC NOTICIAS</div>
-            <div class="item-canal" data-stream="https://b-cdn.net">🎬 CANAL 26 (Cine/Noticias)</div>
-            <div class="item-canal" data-stream="https://akamaihd.net">⭐ DW ESPAÑOL</div>
+            <!-- Funciona al toque en celular (onclick) y con control remoto en la tele -->
+            <div class="item-canal focus" onclick="reproducirEnlace('https://ctedge.com', 0)">📺 TELESUR</div>
+            <div class="item-canal" onclick="reproducirEnlace('https://rtvc-live-vpaid.com', 1)">📰 RTVC NOTICIAS</div>
+            <div class="item-canal" onclick="reproducirEnlace('https://b-cdn.net', 2)">🎬 CANAL 26</div>
+            <div class="item-canal" onclick="reproducirEnlace('https://akamaihd.net', 3)">⭐ DW ESPAÑOL</div>
         </div>
     </div>
 
@@ -77,11 +86,19 @@
         const canales = document.querySelectorAll('.item-canal');
         const vjsPlayer = videojs('tv-player');
 
-        function reproducirEnlace(url) {
+        // Función universal para clics y control remoto
+        function reproducirEnlace(url, index) {
+            canales[currentIndex].classList.remove('focus');
+            currentIndex = index;
+            canales[currentIndex].classList.add('focus');
+            
             vjsPlayer.src({ type: 'application/x-mpegURL', src: url });
-            vjsPlayer.play();
+            vjsPlayer.play().catch(function(error) {
+                console.log("Error al reproducir: ", error);
+            });
         }
 
+        // CONTROL EXCLUSIVO PARA LAS FLECHAS DE LA TELEVISIÓN
         document.addEventListener('keydown', function(e) {
             canales[currentIndex].classList.remove('focus');
 
@@ -94,8 +111,8 @@
             } else if (e.key === 'ArrowUp' && currentIndex >= 2) {
                 currentIndex -= 2;
             } else if (e.key === 'Enter') {
-                const streamUrl = canales[currentIndex].getAttribute('data-stream');
-                reproducirEnlace(streamUrl);
+                // Simula un clic real sobre el botón enfocado por el control remoto
+                canales[currentIndex].click();
             }
 
             canales[currentIndex].classList.add('focus');
